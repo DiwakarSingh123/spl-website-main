@@ -182,7 +182,7 @@ useEffect(() => {
                           {new Date(match.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 max-md:flex-col">
                         <span className="font-headline font-black text-xl uppercase">{match.team1.name}</span>
                         <span className="text-[#444650] font-headline font-light text-lg">VS</span>
                         <span className="font-headline font-black text-xl uppercase text-[#ffd700]">{match.team2?.name || 'TBD'}</span>
