@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import Shell from '@/components/Shell'
+import { ThemeProvider } from '@/app/context/ThemeContext'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
         </head>
         <body>
-          <Shell>{children}</Shell>
+          <ThemeProvider>
+            <Shell>{children}</Shell>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

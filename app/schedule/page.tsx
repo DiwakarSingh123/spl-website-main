@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import SponsorStrip from '@/components/SponsorStrip'
 
-// --- Add Team & Player interfaces (copied from admin teams) ---
+// --- Interfaces (unchanged) ---
 interface Player {
   id: string; name: string; phone: string; role: string; isIndividual?: boolean
   aadhaarDoc?: string; schoolIdDoc?: string; dobProofDoc?: string; photoDoc?: string
@@ -17,7 +18,6 @@ interface Team {
   payments: { status: string; amount: number }[]
   players: Player[]
 }
-// -----------------------------------------------------------
 
 interface Match {
   id: string; phase: string; venue: string; date: string
@@ -26,11 +26,12 @@ interface Match {
   team2?: { name: string; district: string }
 }
 
+// Phase colors – using blue for all phases (with appropriate lightness)
 const phaseColors: Record<string, string> = {
-  DISTRICT: 'text-[#ffd700] border-[#ffd700]/30',
-  ZONAL: 'text-[#c4c6d0] border-[#444650]/40',
-  SEMI_FINAL: 'text-orange-400 border-orange-400/30',
-  FINAL: 'text-[#ffd700] border-[#ffd700]/50',
+  DISTRICT: 'text-blue-600 dark:text-blue-400 border-blue-500/40 bg-blue-50 dark:bg-blue-500/10',
+  ZONAL: 'text-gray-600 dark:text-gray-400 border-gray-400/40 bg-gray-50 dark:bg-gray-500/10',
+  SEMI_FINAL: 'text-orange-600 dark:text-orange-400 border-orange-500/40 bg-orange-50 dark:bg-orange-500/10',
+  FINAL: 'text-blue-600 dark:text-blue-400 border-blue-500/60 bg-blue-50 dark:bg-blue-500/10',
 }
 
 const timeline = [
@@ -46,44 +47,38 @@ export default function Schedule() {
   const [loading, setLoading] = useState(true)
   const [activeDistrict, setActiveDistrict] = useState('ALL')
 
-  // --- Added: state for modal and teams data ---
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
-    const [teamsLoading, setTeamsLoading] = useState(true)          // all teams fetched
-  const [teamsMap, setTeamsMap] = useState<Map<string, Team>>(new Map())  // quick lookup by name+district
+  const [teamsLoading, setTeamsLoading] = useState(true)
+  const [teamsMap, setTeamsMap] = useState<Map<string, Team>>(new Map())
 
-  // Fetch matches (existing)
-   useEffect(() => {
+  // Fetch matches
+  useEffect(() => {
     fetch('/api/schedule')
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setMatches(data) })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }, [])
 
-  console.log(matches);
-  
-  // --- Added: fetch all teams (like admin teams) to build lookup map ---
- // Replace the teams-fetching useEffect with this:
-
-useEffect(() => {
-  fetch('/api/FetchingTeams')
-    .then(res => res.json())
-    .then((teams: Team[]) => {
-      if (!Array.isArray(teams)) {
-        console.warn('Unexpected response from /api/FetchingTeams:', teams)
-        setTeamsMap(new Map())
-        return
-      }
-      const map = new Map<string, Team>()
-      teams.forEach(team => {
-        const key = `${team.name}|${team.district}`
-        map.set(key, team)
+  // Fetch teams for player lookup
+  useEffect(() => {
+    fetch('/api/FetchingTeams')
+      .then(res => res.json())
+      .then((teams: Team[]) => {
+        if (!Array.isArray(teams)) {
+          setTeamsMap(new Map())
+          return
+        }
+        const map = new Map<string, Team>()
+        teams.forEach(team => {
+          const key = `${team.name}|${team.district}`
+          map.set(key, team)
+        })
+        setTeamsMap(map)
       })
-      setTeamsMap(map)
-    })
-    .catch(err => console.error('Failed to fetch teams', err))
-    .finally(() => setTeamsLoading(false))
-}, [])
+      .catch(err => console.error('Failed to fetch teams', err))
+      .finally(() => setTeamsLoading(false))
+  }, [])
 
   const phases = ['ALL', 'DISTRICT', 'ZONAL', 'SEMI_FINAL', 'FINAL']
   const districts = ['ALL', ...Array.from(new Set(matches.flatMap(m => [m.team1.district, m.team2?.district].filter(Boolean) as string[]))).sort()]
@@ -94,7 +89,6 @@ useEffect(() => {
     return phaseOk && districtOk
   })
 
-  // --- Helper to get full team object from match ---
   const getTeamFromMatch = (match: Match, side: 'team1' | 'team2') => {
     const teamData = match[side]
     if (!teamData) return null
@@ -102,208 +96,429 @@ useEffect(() => {
     return teamsMap.get(key) || null
   }
 
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 120 } }
+  }
+
   return (
-    <div className="min-h-screen bg-[#0b0b0f] text-[#e4e1e9] pt-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 pt-20 overflow-x-hidden transition-colors duration-300">
+      {/* HERO */}
+      <section className="relative py-20 md:py-28 border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-screen-2xl mx-auto px-6 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            className="flex flex-col items-center text-center"
+          >
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl mb-6 shadow-lg"
+            >
+              <span className="material-symbols-outlined text-white text-5xl">sports_cricket</span>
+            </motion.div>
 
-      {/* Hero */}
-      <section className="spl-hero border-b border-[#ffd700]/15">
-        <div className="max-w-screen-xl mx-auto relative z-10">
-          <p className="text-[#ffd700] font-headline font-bold text-xs tracking-[0.3em] uppercase mb-4">Fixtures</p>
-          <h1 className="font-headline font-black text-5xl md:text-7xl italic uppercase tracking-tighter leading-[0.9] mb-6 text-white">
-            MATCH <br /><span className="text-[#ffd700]">SCHEDULE</span>
-          </h1>
-          <p className="text-white/70 text-lg max-w-2xl">SPL Tournament Match Schedule Across Uttar Pradesh</p>
+            <p className="uppercase font-headline font-bold tracking-[4px] text-blue-600 dark:text-blue-400 text-sm mb-3">SPL 2026 • LIVE FIXTURES</p>
+            <h1 className="font-headline font-black text-6xl md:text-7xl italic uppercase tracking-[-4px] leading-[0.85] text-gray-900 dark:text-white">
+              MATCH <span className="text-blue-600 dark:text-blue-400">SCHEDULE</span>
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-lg mt-2 max-w-2xl">SPL Tournament Match Schedule Across Uttar Pradesh</p>
+          </motion.div>
+        </div>
+
+        {/* Subtle background glow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-100/20 dark:from-blue-900/10 to-transparent pointer-events-none" />
+      </section>
+
+      {/* TIMELINE */}
+      <section className="py-16 bg-white/80 dark:bg-gray-800/50 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-screen-2xl mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={container}
+            className="grid grid-cols-2 max-sm:grid-cols-1 md:grid-cols-4 gap-6 relative"
+          >
+            {/* Connecting line */}
+            <div className="hidden md:block absolute top-10 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-blue-500/30 dark:via-blue-400/30 to-transparent" />
+
+            {timeline.map((t, i) => (
+              <motion.div
+                key={t.week}
+                variants={item}
+                whileHover={{ scale: 1.05, y: -8 }}
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-8 text-center relative group shadow-md"
+              >
+                <div className="text-5xl mb-6 transition-transform group-hover:scale-110">{t.icon}</div>
+                <div className="text-xs font-headline font-black uppercase tracking-[2px] text-blue-600 dark:text-blue-400 mb-2">{t.week}</div>
+                <div className="text-xl font-headline font-bold text-gray-800 dark:text-white">{t.label}</div>
+                {i < timeline.length - 1 && (
+                  <div className="absolute -right-3 top-1/2 w-6 h-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl hidden md:flex items-center justify-center text-blue-600 dark:text-blue-400 text-xs font-bold">→</div>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-12 px-6 bg-[#131318] border-b border-[#444650]/15">
-        <div className="max-w-screen-xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-0">
-          {timeline.map((t, i) => (
-            <div key={t.week} className={`p-6 text-center ${i < timeline.length - 1 ? 'border-r border-[#444650]/15' : ''}`}>
-              <div className="text-3xl mb-3">{t.icon}</div>
-              <div className="text-xs font-headline font-bold uppercase tracking-widest text-[#ffd700] mb-1">{t.week}</div>
-              <div className="text-sm font-headline font-bold uppercase text-[#c4c6d0]">{t.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* FILTERS + MATCHES */}
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6">
+        <div className="max-w-screen-2xl mx-auto">
 
-      {/* Fixtures */}
-      <section className="py-16 px-6">
-        <div className="max-w-screen-xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-            <div>
-              <div className="w-24 h-1 bg-[#ffd700] mb-4" />
+          {/* Header + Filters */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 sm:mb-10 md:mb-12 gap-6">
+
+            {/* Title */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-3 sm:gap-4"
+            >
+               <div>
+              <div className="w-24 h-1 bg-blue-600 dark:bg-blue-400 mb-4" />
               <h2 className="font-headline font-black text-3xl uppercase tracking-tighter italic">Match Fixtures</h2>
             </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-wrap gap-2">
+            </motion.div>
+
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+
+              {/* Phase Filter */}
+              <div className="flex overflow-x-auto no-scrollbar bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl sm:rounded-3xl p-1">
                 {phases.map(p => (
-                  <button key={p} onClick={() => setActivePhase(p)}
-                    className={`px-4 py-2 text-xs font-headline font-black uppercase tracking-widest transition-all ${activePhase === p ? 'bg-[#ffd700] text-[#002366]' : 'border border-[#444650]/40 text-[#c4c6d0] hover:border-[#ffd700] hover:text-[#ffd700]'}`}>
-                    {p.replace('_', ' ')}
-                  </button>
+                  <motion.button
+                    key={p}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActivePhase(p)}
+                    className={`px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-[10px] sm:text-xs font-headline font-black uppercase tracking-widest rounded-2xl sm:rounded-3xl transition-all ${
+                      activePhase === p
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    {p === 'ALL' ? 'ALL' : p.replace('_', ' ')}
+                  </motion.button>
                 ))}
               </div>
+
+              {/* District Filter */}
               {districts.length > 1 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex overflow-x-auto no-scrollbar bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-2xl sm:rounded-3xl p-1">
                   {districts.map(d => (
-                    <button key={d} onClick={() => setActiveDistrict(d)}
-                      className={`px-3 py-1.5 text-[0.6rem] font-headline font-black uppercase tracking-widest transition-all ${activeDistrict === d ? 'bg-[#002366] text-[#ffd700] border border-[#ffd700]/40' : 'border border-[#444650]/30 text-[#c4c6d0]/60 hover:border-[#ffd700]/40 hover:text-[#ffd700]'}`}>
-                      {d === 'ALL' ? 'All Districts' : d}
-                    </button>
+                    <motion.button
+                      key={d}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setActiveDistrict(d)}
+                      className={`px-4 sm:px-6 py-2 sm:py-3 whitespace-nowrap text-[10px] sm:text-xs font-headline font-black uppercase tracking-widest rounded-2xl sm:rounded-3xl transition-all ${
+                        activeDistrict === d
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'
+                      }`}
+                    >
+                      {d === 'ALL' ? 'All' : d}
+                    </motion.button>
                   ))}
                 </div>
               )}
             </div>
           </div>
 
+          {/* Matches */}
           {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-2 border-[#ffd700] border-t-transparent rounded-full animate-spin" />
+            <div className="flex justify-center py-20 sm:py-32">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+                className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full"
+              />
             </div>
           ) : filtered.length > 0 ? (
-            <div className="space-y-4">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="grid gap-4 sm:gap-6"
+            >
               {filtered.map(match => (
-                // --- Added onClick to open modal ---
-                <div
+                <motion.div
                   key={match.id}
+                  variants={item}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => setSelectedMatch(match)}
-                  className="bg-[#131318] border border-[#444650]/20 p-6 hover:border-[#ffd700]/30 transition-colors cursor-pointer"
+                  className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500/40 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 cursor-pointer transition-all flex flex-col md:flex-row md:items-center gap-4 sm:gap-6 md:gap-8 shadow-sm"
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className={`text-[0.6rem] font-headline font-bold uppercase tracking-widest border px-2 py-0.5 ${phaseColors[match.phase] || 'text-[#c4c6d0] border-[#444650]/30'}`}>
-                          {match.phase.replace('_', ' ')}
-                        </span>
-                        <span className="text-xs text-[#c4c6d0]">
-                          {new Date(match.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 max-md:flex-col">
-                        <span className="font-headline font-black text-xl uppercase">{match.team1.name}</span>
-                        <span className="text-[#444650] font-headline font-light text-lg">VS</span>
-                        <span className="font-headline font-black text-xl uppercase text-[#ffd700]">{match.team2?.name || 'TBD'}</span>
-                      </div>
-                      <p className="text-xs text-[#c4c6d0] mt-2">📍 {match.venue}</p>
-                    </div>
-                    {match.result ? (
-                      <div className="bg-[#0b0b0f] border border-[#ffd700]/20 px-6 py-4 text-center min-w-[160px]">
-                        {match.score1 && <p className="text-xs text-[#c4c6d0]">{match.team1.name}: <span className="text-[#e4e1e9] font-bold">{match.score1}</span></p>}
-                        {match.score2 && <p className="text-xs text-[#c4c6d0]">{match.team2?.name}: <span className="text-[#e4e1e9] font-bold">{match.score2}</span></p>}
-                        {match.winner && <p className="text-xs text-[#ffd700] font-headline font-bold uppercase mt-2">🏆 {match.winner}</p>}
-                        {match.result && <p className="text-xs text-[#c4c6d0]">{match.result}</p>}
-                      </div>
-                    ) : (
-                      <div className="border border-[#444650]/30 px-6 py-4 text-center min-w-[120px]">
-                        <p className="text-xs font-headline font-bold uppercase tracking-widest text-[#c4c6d0]">Upcoming</p>
-                      </div>
-                    )}
+
+                  {/* Phase */}
+                  <div className={`text-[10px] sm:text-xs font-headline font-black uppercase tracking-widest px-3 sm:px-5 py-2 rounded-xl sm:rounded-2xl border ${phaseColors[match.phase]}`}>
+                    {match.phase.replace('_', ' ')}
                   </div>
-                </div>
+
+                  {/* Teams */}
+                  <div className="flex-1 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
+
+                    {/* Team 1 */}
+                    <div className="flex-1">
+                      <div className="font-headline font-black text-lg sm:text-xl md:text-2xl uppercase text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {match.team1.name}
+                      </div>
+                      <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                        {match.team1.district}
+                      </div>
+                    </div>
+
+                    {/* VS */}
+                    <div className="flex flex-col items-center">
+                      <span className="text-blue-600 dark:text-blue-400 text-xl sm:text-2xl md:text-4xl">VS</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 mt-1">
+                        {new Date(match.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+
+                    {/* Team 2 */}
+                    <div className="flex-1">
+                      <div className="font-headline font-black text-lg sm:text-xl md:text-2xl uppercase text-blue-600 dark:text-blue-400">
+                        {match.team2?.name || 'TBD'}
+                      </div>
+                      <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
+                        {match.team2?.district || ''}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Venue */}
+                  <div className="w-full md:w-52 text-center md:text-left text-xs sm:text-sm">
+                    <p className="flex justify-center md:justify-start items-center gap-2 text-gray-600 dark:text-gray-400">
+                      <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base">location_on</span>
+                      {match.venue}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-500 mt-1">
+                      {new Date(match.date).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })}
+                    </p>
+                  </div>
+
+                  {/* Status */}
+                  {match.result ? (
+                    <div className="w-full sm:w-auto text-center bg-gray-50 dark:bg-gray-900 border border-blue-600/30 dark:border-blue-500/30 px-5 sm:px-7 py-3 sm:py-5 rounded-2xl sm:rounded-3xl">
+                      <p className="text-blue-600 dark:text-blue-400 text-xs font-bold">FINAL</p>
+                      {match.winner && (
+                        <p className="text-gray-800 dark:text-white text-sm sm:text-lg font-black mt-1">
+                          🏆 {match.winner}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full sm:w-auto text-center bg-green-50 dark:bg-green-900/20 border border-green-500/30 text-green-600 dark:text-green-400 text-[10px] sm:text-xs font-black uppercase px-5 sm:px-7 py-3 sm:py-5 rounded-2xl sm:rounded-3xl">
+                      UPCOMING
+                    </div>
+                  )}
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <div className="text-center py-20 border border-[#444650]/20">
-              <div className="text-5xl mb-4">📅</div>
-              <p className="font-headline font-bold uppercase tracking-widest text-[#c4c6d0]">No fixtures scheduled yet</p>
-              <p className="text-[#c4c6d0]/50 text-sm mt-2">Check back soon for match schedule</p>
+            <div className="text-center py-20 sm:py-32 border border-dashed border-gray-300 dark:border-gray-700 rounded-2xl sm:rounded-3xl">
+              <div className="text-5xl sm:text-7xl mb-4 sm:mb-6">📅</div>
+              <p className="font-headline font-bold text-lg sm:text-2xl text-gray-500 dark:text-gray-400">
+                No matches found
+              </p>
             </div>
           )}
         </div>
       </section>
 
-      {/* Grand Final */}
-      <SponsorStrip />
-      <section className="py-20 px-6 bg-[#002366] border-t border-[#ffd700]/20 text-center">
-        <div className="text-6xl mb-6">🏟️</div>
-        <h2 className="font-headline font-black text-4xl italic uppercase tracking-tighter mb-3 text-white">
-          Grand Final — <span className="text-[#ffd700]">Ekana Stadium</span>
-        </h2>
-        <p className="text-white/70">Lucknow, Uttar Pradesh • Prize: ₹11,00,000 • Scholarship: 50%</p>
+      {/* GRAND FINAL TEASER */}
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 relative">
+        <div className="max-w-screen-2xl mx-auto text-center">
+
+          <motion.div
+            initial={{ scale: 0.9 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col sm:inline-flex sm:flex-row items-center gap-3 sm:gap-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl border border-blue-600/30 dark:border-blue-500/30 rounded-2xl sm:rounded-3xl px-5 sm:px-8 py-4 sm:py-5 mb-6 sm:mb-8"
+          >
+            {/* Icon */}
+            <span className="text-3xl sm:text-4xl md:text-5xl">🏟️</span>
+
+            {/* Text */}
+            <div className="text-center sm:text-left">
+              <span className="block text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-headline font-black tracking-widest">
+                GRAND FINAL
+              </span>
+
+              <span className="text-lg sm:text-2xl md:text-3xl font-headline font-black text-gray-800 dark:text-white leading-tight">
+                Ekana Stadium • Lucknow
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Prize */}
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-xs sm:max-w-md mx-auto leading-relaxed">
+            Prize Pool <span className="text-blue-600 dark:text-blue-400 font-bold">₹11,00,000</span> + 50% Scholarship
+          </p>
+
+        </div>
       </section>
 
-      {/* --- Poped model where both teams players data shows --- */}
-      {selectedMatch && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#131318] border border-[#444650]/30 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-6 border-b border-[#444650]/20 sticky top-0 bg-[#131318]">
-              <div>
-                <h2 className="font-headline font-black text-xl uppercase tracking-tight text-[#ffd700]">
-                  {selectedMatch.team1.name} vs {selectedMatch.team2?.name || 'TBD'}
-                </h2>
-                <p className="text-xs text-[#c4c6d0]/60 mt-1">
-                  {new Date(selectedMatch.date).toLocaleString('en-IN', { dateStyle: 'full', timeStyle: 'short' })} • {selectedMatch.venue}
-                </p>
+      <SponsorStrip />
+
+      {/* MATCH DETAIL MODAL */}
+      <AnimatePresence>
+        {selectedMatch && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[999] flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
+            onClick={() => setSelectedMatch(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 40 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 40 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 w-full max-w-full sm:max-w-2xl md:max-w-4xl lg:max-w-5xl h-[90vh] rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col"
+            >
+
+              {/* Header (fixed) */}
+              <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-t-2xl sm:rounded-t-3xl">
+                <div>
+                  <h2 className="font-headline font-black text-lg sm:text-2xl md:text-3xl uppercase tracking-tight text-gray-800 dark:text-white">
+                    {selectedMatch.team1.name}{' '}
+                    <span className="text-blue-600 dark:text-blue-400">VS</span>{' '}
+                    {selectedMatch.team2?.name || 'TBD'}
+                  </h2>
+
+                  <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
+                    <span>
+                      {new Date(selectedMatch.date).toLocaleDateString('en-IN', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
+                    <span className="text-blue-600 dark:text-blue-400 hidden sm:inline">•</span>
+                    <span>{selectedMatch.venue}</span>
+                  </p>
+                </div>
+
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setSelectedMatch(null)}
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-xl sm:text-3xl text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                >
+                  ✕
+                </motion.button>
               </div>
-              <button onClick={() => setSelectedMatch(null)} className="text-[#c4c6d0]/40 hover:text-[#ffd700] transition-colors">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div className="p-6">
-              {/* Team 1 & Team 2 players side by side */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 scroll-smooth">
+
                 {[1, 2].map((sideNum) => {
                   const side = sideNum === 1 ? 'team1' : 'team2'
                   const teamData = selectedMatch[side]
                   if (!teamData) return null
-                  const fullTeam = getTeamFromMatch(selectedMatch, side as 'team1' | 'team2')
+
+                  const fullTeam = getTeamFromMatch(
+                    selectedMatch,
+                    side as 'team1' | 'team2'
+                  )
                   const players = fullTeam?.players || []
+
                   return (
-                    <div key={side}>
-                      <h3 className="font-headline font-bold uppercase tracking-tight text-[#c4c6d0] mb-3 text-sm">
-                        {teamData.name} Players ({players.length})
-                      </h3>
-                      {players.length > 0 ? (
-                        <div className="space-y-3">
-                          {players.map((player, idx) => (
-                            <div key={player.id} className="flex items-center gap-3 bg-[#0b0b0f] border border-[#444650]/20 p-3">
-                              <div className="w-12 h-12 bg-[#131318] rounded-full flex items-center justify-center overflow-hidden">
+                    <motion.div
+                      key={side}
+                      initial={{ opacity: 0, x: sideNum === 1 ? -30 : 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: sideNum * 0.15 }}
+                      className="space-y-4 sm:space-y-6"
+                    >
+
+                      {/* Team Header */}
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-headline font-black uppercase text-base sm:text-lg md:text-xl text-gray-800 dark:text-white">
+                          {teamData.name}
+                        </h3>
+
+                        <span className="text-[10px] sm:text-xs font-bold px-3 sm:px-4 py-1 sm:py-2 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl sm:rounded-2xl">
+                          {players.length} PLAYERS
+                        </span>
+                      </div>
+
+                      {/* Players */}
+                      <div className="space-y-3 sm:space-y-4">
+                        {players.length > 0 ? (
+                          players.map((player, idx) => (
+                            <motion.div
+                              key={player.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: idx * 0.05 }}
+                              className="flex gap-3 sm:gap-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:border-blue-500 dark:hover:border-blue-500/30 transition-all"
+                            >
+                              {/* Player Image */}
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
                                 {player.photoDoc ? (
-                                  <img src={player.photoDoc} alt={player.name} className="w-full h-full object-cover" />
+                                  <img
+                                    src={player.photoDoc}
+                                    alt={player.name}
+                                    className="w-full h-full object-cover"
+                                  />
                                 ) : (
-                                  <span className="material-symbols-outlined text-[#c4c6d0]/40">person</span>
+                                  <div className="w-full h-full flex items-center justify-center text-xl sm:text-2xl md:text-3xl text-gray-400 dark:text-gray-600">
+                                    👤
+                                  </div>
                                 )}
                               </div>
-                              <div className="flex-1">
-                                <div className="font-headline font-bold text-[#e4e1e9] text-sm">{player.name}</div>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className="text-[0.6rem] font-headline font-bold uppercase tracking-widest text-[#ffd700] border border-[#ffd700]/30 bg-[#ffd700]/10 px-2 py-0.5">
+
+                              {/* Player Info */}
+                              <div className="flex-1 min-w-0">
+                                <p className="font-headline font-bold text-sm sm:text-base md:text-lg text-gray-800 dark:text-white truncate">
+                                  {player.name}
+                                </p>
+
+                                <div className="flex gap-2 sm:gap-3 mt-1 sm:mt-2">
+                                  <span className="text-[10px] sm:text-xs font-black uppercase px-2 sm:px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg sm:rounded-xl">
                                     {player.role}
                                   </span>
-                                  {/* {player.isIndividual && (
-                                    <span className="text-[0.6rem] font-headline font-bold uppercase tracking-widest text-violet-400 border border-violet-400/30 bg-violet-400/10 px-2 py-0.5">
-                                      Individual
-                                    </span>
-                                  )} */}
                                 </div>
-                                {/* <div className="text-xs text-[#c4c6d0]/50 mt-1">📞 {player.phone}</div> */}
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-[#c4c6d0]/40">No players registered for this team.</p>
-                      )}
-                    </div>
+                            </motion.div>
+                          ))
+                        ) : (
+                          <p className="text-gray-500 dark:text-gray-500 italic text-center py-8 sm:py-12">
+                            No player data yet
+                          </p>
+                        )}
+                      </div>
+                    </motion.div>
                   )
                 })}
               </div>
+
+              {/* Footer (ALWAYS VISIBLE) */}
               {selectedMatch.result && (
-                <div className="mt-6 pt-4 border-t border-[#444650]/20 text-center">
-                  <p className="text-[#ffd700] font-headline font-bold uppercase tracking-widest text-sm">
-                    {selectedMatch.result}
-                    {selectedMatch.winner && ` • Winner: ${selectedMatch.winner}`}
-                  </p>
+                <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6 border-t border-gray-200 dark:border-gray-700 text-center text-blue-600 dark:text-blue-400 font-headline font-bold uppercase bg-gray-50 dark:bg-gray-900 rounded-b-2xl sm:rounded-b-3xl">
+                  {selectedMatch.result} • Winner: {selectedMatch.winner || '—'}
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-      {/* --- END MODAL --- */}
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

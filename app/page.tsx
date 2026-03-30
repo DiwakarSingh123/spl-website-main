@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { ArrowRight, Calendar, Trophy, Users, MapPin, Award, Star, Sparkles } from 'lucide-react'
 
 interface Match {
   id: string; phase: string; venue: string; date: string
@@ -33,312 +35,378 @@ export default function Home() {
     fetch('/api/admin/player-of-week').then(r => r.json()).then(d => { if (d) setPow(d) }).catch(() => { })
   }, [])
 
-  return (
-    <main className="relative md:pt-20">
+  const upcomingFixtures = fixtures.filter(f => !f.result && !f.winner)
 
-      {/* ── Hero ── */}
-      <section className="relative h-[921px] w-full overflow-hidden bg-[#001a4d]">
-        {/* BG Image */}
+  const fallbackAnnouncements = [
+    { id: '1', title: 'Ekana Stadium Confirmed as Final Venue', content: '...', type: 'INFO', createdAt: '2025-02-10' },
+    { id: '2', title: '50% Scholarship for All Participants', content: '...', type: 'UPDATE', createdAt: '2025-02-05' },
+  ]
+
+  return (
+    <main className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-800 dark:text-gray-100">
+
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Background with abstract shapes - dark mode variants */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/stadium.avif"
-            alt="SPL Stadium"
-            fill
-            sizes="100vw"
-            className="object-cover opacity-75"
-            priority
-          />
-          {/* single gradient: left side dark for text legibility, right stays visible */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#001a4d]/90 via-[#001a4d]/50 to-[#001a4d]/10" />
-          {/* subtle bottom fade to page bg */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0b0b0f] to-transparent" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/50 dark:bg-blue-900/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-200/50 dark:bg-indigo-900/20 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-yellow-200/30 dark:bg-yellow-900/10 rounded-full blur-2xl" />
         </div>
 
-        <div className="relative z-10 h-full max-w-screen-2xl mx-auto px-6 flex flex-col justify-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 lg:py-0 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              {/* Live badge */}
-              <div className="flex items-center gap-3 mb-6">
-                <span className="bg-[#002366] border border-[#ffd700]/40 text-[#ffd700] px-3 py-1 text-xs font-headline font-black uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-2 h-2 bg-[#ffd700] rounded-full animate-pulse" />
-                  LIVE MATCH
+            {/* Left Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-2 bg-blue-600/10 dark:bg-blue-500/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6 border border-blue-200 dark:border-blue-800">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600 dark:bg-blue-400"></span>
                 </span>
-                <span className="text-[#c4c6d0] font-headline text-xs tracking-widest uppercase">
-                  FINALS WEEK • ROUND 12
-                </span>
+                <span className="text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider">Live Match</span>
+                <span className="text-gray-500 dark:text-gray-400 text-xs">• Finals Week</span>
               </div>
 
-              {/* Title */}
-              <h1 className="font-headline font-black text-6xl md:text-8xl lg:text-[7rem] leading-[0.9] tracking-tighter mb-8 italic uppercase">
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight mb-6 text-gray-900 dark:text-white">
                 BATTLE OF <br />
-                <span className="text-[#ffd700]">TITANS</span>
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">TITANS</span>
               </h1>
 
               {/* Live Scoreboard */}
-              <div className="bg-[#131318]/60 backdrop-blur-xl p-8 shadow-2xl border-l-4 border-[#ffd700] max-w-xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-xl mb-8"
+              >
                 {liveMatch ? (
                   <>
                     <div className="flex justify-between items-center mb-6">
-                      <div className="text-center">
-                        <div className="text-3xl font-headline font-black mb-1">
-                          {liveMatch.team1.name.split(' ').map((w: string) => w[0]).join('').slice(0, 3).toUpperCase()}
-                        </div>
-                        <div className="text-[0.6rem] tracking-[0.2em] text-[#c4c6d0] font-headline font-bold uppercase">{liveMatch.team1.name}</div>
+                      <div className="text-center flex-1">
+                        <div className="text-3xl font-black text-gray-800 dark:text-white">{liveMatch.team1.name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">TEAM</div>
                       </div>
-                      <span className="text-4xl font-headline font-light text-[#c4c6d0]/40">VS</span>
-                      <div className="text-center">
-                        <div className="text-3xl font-headline font-black mb-1 text-[#ffd700]">
-                          {(liveMatch.team2?.name || 'TBD').split(' ').map((w: string) => w[0]).join('').slice(0, 3).toUpperCase()}
-                        </div>
-                        <div className="text-[0.6rem] tracking-[0.2em] text-[#c4c6d0] font-headline font-bold uppercase">{liveMatch.team2?.name || 'TBD'}</div>
+                      <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">VS</div>
+                      <div className="text-center flex-1">
+                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">{liveMatch.team2?.name || 'TBD'}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">TEAM</div>
                       </div>
                     </div>
                     {liveMatch.score1 && (
-                      <div className="flex justify-center items-baseline gap-4 mb-4">
-                        <span className="text-5xl md:text-6xl font-headline font-black text-[#ffd700]">{liveMatch.score1}</span>
+                      <div className="text-center mb-4">
+                        <div className="text-5xl font-black text-blue-600 dark:text-blue-400">{liveMatch.score1}</div>
                       </div>
                     )}
-                    <div className="flex justify-between items-center bg-[#1c1c21]/80 px-4 py-3">
-                      <span className="text-xs font-medium text-[#e9c349] italic">
-                        {liveMatch.phase.replace('_', ' ')}
-                      </span>
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <span className="font-mono">{liveMatch.phase.replace('_', ' ')}</span>
                       {liveMatch.winner && (
-                        <span className="text-xs font-medium text-emerald-400">🏆 {liveMatch.winner}</span>
+                        <span className="text-green-600 dark:text-green-400 flex items-center gap-1"><Trophy size={12} /> {liveMatch.winner}</span>
                       )}
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="flex justify-between items-center mb-6">
-                      <div className="text-center">
-                        <div className="text-3xl font-headline font-black mb-1">SPL</div>
-                        <div className="text-[0.6rem] tracking-[0.2em] text-[#c4c6d0] font-headline font-bold uppercase">Season 2025</div>
+                      <div className="text-center flex-1">
+                        <div className="text-3xl font-black text-gray-800 dark:text-white">SPL</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Season 2026</div>
                       </div>
-                      <span className="text-4xl font-headline font-light text-[#c4c6d0]/40">U19</span>
-                      <div className="text-center">
-                        <div className="text-3xl font-headline font-black mb-1 text-[#ffd700]">UP</div>
-                        <div className="text-[0.6rem] tracking-[0.2em] text-[#c4c6d0] font-headline font-bold uppercase">Uttar Pradesh</div>
+                      <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">U19</div>
+                      <div className="text-center flex-1">
+                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">UP</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Uttar Pradesh</div>
                       </div>
                     </div>
-                    <div className="flex justify-center items-baseline gap-4 mb-4">
-                      <span className="text-5xl font-headline font-black text-[#ffd700]">₹11L</span>
+                    <div className="text-center mb-4">
+                      <div className="text-5xl font-black text-blue-600 dark:text-blue-400">₹11L</div>
                     </div>
-                    <div className="flex justify-between items-center bg-[#1c1c21]/80 px-4 py-3">
-                      <span className="text-xs font-medium text-[#e9c349] italic">Winner Prize Money</span>
-                      <span className="text-xs font-medium text-[#c4c6d0]">50% Scholarship</span>
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <span className="font-mono">Winner Prize Money</span>
+                      <span className="text-blue-600 dark:text-blue-400">50% Scholarship</span>
                     </div>
                   </>
                 )}
-              </div>
+              </motion.div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4 mt-8">
-                <Link href="/register"
-                  className="bg-[#ffd700] text-[#002366] px-8 py-3 font-headline font-black uppercase tracking-tight hover:brightness-110 transition-all">
-                  Register Now
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/register"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-8 py-3 rounded-full transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  Register Now <ArrowRight size={18} />
                 </Link>
-                <Link href="/tournament-format"
-                  className="border border-[#444650] text-[#e4e1e9] px-8 py-3 font-headline font-black uppercase tracking-tight hover:border-[#ffd700] hover:text-[#ffd700] transition-all">
+                <Link
+                  href="/tournament-format"
+                  className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-8 py-3 rounded-full transition-all"
+                >
                   Tournament Info
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Stats panel — desktop */}
-            <div className="hidden lg:flex flex-col gap-6 items-end">
+            {/* Right Stats Panel */}
+            <div className="hidden lg:grid grid-cols-2 gap-4">
               {[
-                { label: 'Winner Prize', value: '₹11,00,000' },
-                { label: 'Scholarship', value: '50%' },
-                { label: 'Participants', value: '1000+' },
-                { label: 'Final Venue', value: 'Ekana Stadium' },
-              ].map(s => (
-                <div key={s.label} className="bg-[#131318]/60 backdrop-blur-xl border border-[#444650]/30 px-8 py-5 text-right w-72">
-                  <div className="text-3xl font-headline font-black text-[#ffd700]">{s.value}</div>
-                  <div className="text-xs font-headline font-bold uppercase tracking-widest text-[#c4c6d0] mt-1">{s.label}</div>
-                </div>
+                { label: 'Winner Prize', value: '₹11L', icon: Trophy },
+                { label: 'Scholarship', value: '50%', icon: Award },
+                { label: 'Participants', value: '1000+', icon: Users },
+                { label: 'Final Venue', value: 'Ekana', icon: MapPin },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + i * 0.1 }}
+                  className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-5 text-center border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all"
+                >
+                  <stat.icon className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stat.value}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stat.label}</div>
+                </motion.div>
               ))}
             </div>
           </div>
         </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden lg:block">
+          <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-600 rounded-full flex justify-center">
+            <div className="w-1 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mt-2 animate-pulse" />
+          </div>
+        </div>
       </section>
 
-      {/* ── Upcoming Fixtures ── */}
-      <section className="bg-[#0b0b0f]  px-6">
-        <div className="max-w-screen-2xl mx-auto">
+      {/* UPCOMING FIXTURES */}
+      <section className="py-20 px-6 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="font-headline font-black text-4xl uppercase tracking-tighter italic">Upcoming Fixtures</h2>
-              <div className="w-24 h-1 bg-[#ffd700] mt-2" />
+              <div className="flex items-center gap-2 mb-3">
+                <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <span className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-wider">Next Matches</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-gray-900 dark:text-white">Upcoming <span className="text-blue-600 dark:text-blue-400">Fixtures</span></h2>
             </div>
-            <Link href="/schedule" className="text-xs font-headline font-bold uppercase tracking-widest text-[#ffd700] hover:underline flex items-center gap-1">
-              View All <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+            <Link
+              href="/schedule"
+              className="hidden md:flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-medium"
+            >
+              View All <ArrowRight size={18} />
             </Link>
           </div>
 
-          {(() => {
-            const upcomingFixtures = fixtures.filter(f => !f.result);
-            if (upcomingFixtures.length > 0) {
-              return (
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {upcomingFixtures.map((f, i) => (
-                    <div key={f.id}
-                      className={`bg-[#131318] p-6 hover:-translate-y-1 transition-transform duration-300 border ${i === 0 ? 'border-[#ffd700]/50' : 'border-[#444650]/10'}`}>
-                      <div className={`text-[0.6rem] font-headline font-bold tracking-[0.2em] uppercase mb-4 ${i === 0 ? 'text-[#ffd700]' : 'text-[#c4c6d0]'}`}>
-                        {new Date(f.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} • {new Date(f.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} IST
-                      </div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="text-sm font-headline font-black uppercase">{f.team1.name}</div>
-                        <div className="text-[10px] text-[#c4c6d0] font-bold px-2 py-1 bg-[#1c1c21] border border-[#444650]/20">VS</div>
-                        <div className="text-sm font-headline font-black uppercase">{f.team2?.name || 'TBD'}</div>
-                      </div>
-                      <div className="text-[0.6rem] font-headline font-bold uppercase tracking-widest text-[#ffd700] border border-[#ffd700]/30 px-2 py-0.5 mb-4 w-fit">
-                        {f.phase.replace('_', ' ')}
-                      </div>
-                      <Link href="/schedule"
-                        className="block w-full text-center border border-[#444650]/40 hover:border-[#ffd700] hover:bg-[#ffd700] hover:text-[#002366] py-2 text-[0.65rem] font-headline font-black uppercase tracking-widest transition-all">
-                        View Details
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              );
-            } else {
-              return (
-                <div className="text-center py-16 border border-[#444650]/20 bg-[#131318]">
-                  <span className="material-symbols-outlined text-[#ffd700]/20 block mb-3" style={{ fontSize: '48px' }}>calendar_today</span>
-                  <p className="font-headline font-bold uppercase tracking-widest text-[#c4c6d0]/40">Fixtures will be announced soon</p>
-                  <Link href="/schedule" className="mt-4 inline-block text-xs font-headline font-bold uppercase tracking-widest text-[#ffd700] hover:underline">View Schedule →</Link>
-                </div>
-              );
-            }
-          })()}
+          {upcomingFixtures.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {upcomingFixtures.map((f, i) => (
+                <motion.div
+                  key={f.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -5 }}
+                  className="group bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-xl transition-all"
+                >
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    {new Date(f.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} •{' '}
+                    {new Date(f.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} IST
+                  </div>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{f.team1.name}</span>
+                    <span className="text-gray-400 dark:text-gray-500 text-xs">VS</span>
+                    <span className="font-bold text-right text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{f.team2?.name || 'TBD'}</span>
+                  </div>
+                  <div className="inline-block bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full mb-4">
+                    {f.phase.replace('_', ' ')}
+                  </div>
+                  <Link
+                    href="/schedule"
+                    className="block w-full text-center text-sm border border-gray-200 dark:border-gray-700 rounded-full py-2 text-gray-600 dark:text-gray-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all"
+                  >
+                    Details
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
+              <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+              <p className="text-gray-500 dark:text-gray-400">Fixtures will be announced soon</p>
+              <Link href="/schedule" className="mt-4 inline-block text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline">
+                View Full Schedule →
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile view all */}
+          <div className="mt-8 text-center md:hidden">
+            <Link href="/schedule" className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400">
+              View All Fixtures <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ── Latest News ── */}
-      <section className="bg-[#0b0b0f] py-20 px-6 border-t border-[#444650]/10">
-        <div className="max-w-screen-2xl mx-auto">
-          <div className="flex items-center gap-6 mb-16 relative">
-            <h2 className="font-headline font-black text-6xl md:text-8xl uppercase tracking-tighter opacity-[0.03] leading-none select-none">THE FEED</h2>
-            <h2 className="absolute font-headline font-black text-4xl uppercase tracking-tight italic">Latest News</h2>
+      {/* LATEST NEWS */}
+      <section className="py-20 px-6 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <span className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-wider">Latest Updates</span>
           </div>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-gray-900 dark:text-white mb-12">News & <span className="text-blue-600 dark:text-blue-400">Announcements</span></h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            {/* Main Feature */}
-            <div className="md:col-span-7 group cursor-pointer overflow-hidden relative aspect-[16/10] border border-[#444650]/10">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Featured News */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="lg:col-span-2 group relative h-96 rounded-2xl overflow-hidden shadow-lg"
+            >
               <Image
                 src="/Hero.png"
-                alt="SPL News Feature"
+                alt="SPL News"
                 fill
-                sizes="(max-width: 768px) 100vw, 58vw"
-                className="object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700 scale-105 group-hover:scale-110"
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0f] via-[#0b0b0f]/40 to-transparent p-8 flex flex-col justify-end">
-                <span className="text-[#ffd700] font-headline font-bold text-xs tracking-[0.3em] uppercase mb-3">Official</span>
-                <h3 className="text-3xl md:text-5xl font-headline font-black italic uppercase leading-[1.1] max-w-2xl mb-4 group-hover:text-[#ffd700] transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-8">
+                <span className="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+                  {announcements[0]?.type || 'Official'}
+                </span>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-blue-300 transition-colors">
                   {announcements[0]?.title || 'SPL 2025 — Registration Now Open'}
                 </h3>
-                <p className="text-[#c4c6d0]/80 max-w-xl text-sm leading-relaxed hidden md:block">
+                <p className="text-white/80 text-sm max-w-xl line-clamp-2">
                   {announcements[0]?.content || 'Team and individual registrations are now open for Saroj Premier League Under-19 tournament. Register today to compete for ₹11,00,000 prize money.'}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Side Announcements */}
-            <div className="md:col-span-5 flex flex-col gap-6">
-              {(announcements.length > 1 ? announcements.slice(1) : [
-                { id: '1', title: 'Ekana Stadium Confirmed as Final Venue', content: 'The grand finale of SPL will be held at the prestigious Ekana Cricket Stadium in Lucknow.', type: 'INFO', createdAt: '2025-02-10' },
-                { id: '2', title: '50% Scholarship for All Participants', content: 'Every player participating in SPL will be eligible for 50% scholarship at Saroj International University.', type: 'UPDATE', createdAt: '2025-02-05' },
-              ]).slice(0, 2).map(n => (
-                <div key={n.id} className="bg-[#131318] p-6 flex gap-6 hover:bg-[#1c1c21] transition-colors cursor-pointer border border-[#444650]/10">
-                  <div className="w-32 h-24 flex-shrink-0 bg-[#002366] overflow-hidden border border-[#444650]/20 relative flex items-center justify-center">
-                    <span className="font-headline font-black text-xs italic uppercase text-[#ffd700]/30">SPL</span>
+            <div className="space-y-6">
+              {(announcements.length > 1 ? announcements.slice(1) : fallbackAnnouncements).slice(0, 2).map((n, i) => (
+                <motion.div
+                  key={n.id}
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg transition-all"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <span className="text-xs text-blue-600 dark:text-blue-400 uppercase tracking-wider">{n.type}</span>
+                      <h4 className="font-bold text-gray-800 dark:text-white mt-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{n.title}</h4>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[0.6rem] font-headline font-bold text-[#ffd700] uppercase tracking-widest">{n.type}</span>
-                    <h4 className="font-headline font-bold text-lg leading-tight mt-2 uppercase hover:text-[#ffd700] transition-colors">{n.title}</h4>
-                  </div>
-                </div>
+                </motion.div>
               ))}
-              <Link href="/news" className="text-xs font-headline font-bold uppercase tracking-widest text-[#ffd700] hover:underline flex items-center gap-1 mt-auto">
-                All Announcements <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+
+              <Link
+                href="/news"
+                className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-medium mt-4"
+              >
+                All Announcements <ArrowRight size={16} />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Player of the Week ── */}
+      {/* PLAYER OF THE WEEK */}
       {pow && (
-        <section className="py-20 px-6 bg-[#0b0b0f] overflow-hidden border-t border-[#444650]/10">
-          <div className="max-w-screen-2xl mx-auto">
-            <div className="grid lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-5 relative">
-                <div className="absolute -top-12 -left-12 text-[10rem] font-headline font-black text-[#ffd700]/5 select-none pointer-events-none uppercase">MVP</div>
-                <h2 className="font-headline font-black text-5xl italic uppercase mb-8 relative z-10 leading-none">
-                  Player of <br />
-                  <span className="text-[#ffd700] text-7xl">The Week</span>
+        <section className="py-20 px-6 bg-white dark:bg-gray-900">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                className="order-2 lg:order-1"
+              >
+                <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 rounded-full px-4 py-1.5 mb-6">
+                  <Award className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider">Player of the Week</span>
+                </div>
+                <h2 className="text-5xl md:text-6xl font-black tracking-tight text-gray-900 dark:text-white mb-6">
+                  <span className="text-blue-600 dark:text-blue-400">Star</span> Performer
                 </h2>
-                <div className="space-y-6 relative z-10">
-                  {[
-                    { stat: pow.runs || '—', label: 'Runs Scored' },
-                    { stat: pow.wickets || '—', label: 'Best Bowling' },
-                    { stat: pow.impactRating || '—', label: 'Impact Rating' },
-                  ].map(s => (
-                    <div key={s.label} className="flex items-baseline gap-4 border-b border-[#444650]/20 pb-4">
-                      <span className="text-4xl font-headline font-black text-[#ffd700]">{s.stat}</span>
-                      <span className="text-sm font-headline font-bold text-[#c4c6d0] uppercase tracking-widest">{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-12">
-                  <h3 className="text-3xl font-headline font-black uppercase mb-1">{pow.name}</h3>
-                  <p className="text-[#ffd700] text-sm font-headline font-bold uppercase tracking-widest mb-2">{pow.role} · {pow.teamName} · {pow.district}</p>
-                  <p className="text-[#c4c6d0] font-medium max-w-sm">{pow.description || 'Outstanding performance this week.'}</p>
-                  <Link href="/register"
-                    className="mt-8 inline-flex items-center gap-4 text-[#ffd700] font-headline font-black uppercase tracking-[0.2em] group">
-                    Register Now
-                    <span className="material-symbols-outlined group-hover:translate-x-2 transition-transform">arrow_forward</span>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="lg:col-span-7 relative h-[500px] flex items-center justify-center">
-                <div className="absolute inset-0 bg-[#ffd700]/5 skew-y-6 scale-y-110 border-y border-[#ffd700]/20" />
-                <div className="relative z-10 h-full w-full border border-[#ffd700]/20 overflow-hidden">
-                  <Image
-                    src={pow.photoUrl || '/Hero.png'}
-                    alt={pow.name}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                    className="object-cover grayscale brightness-90"
-                  />
-                  <div className="absolute bottom-8 right-8 z-20 bg-[#ffd700] text-[#002366] p-6 font-headline font-black italic text-3xl uppercase tracking-tighter shadow-[10px_10px_0_rgba(0,35,102,1)]">
-                    {pow.name.split(' ').slice(0, 2).join(' ').toUpperCase()}
+                <div className="space-y-6 mb-8">
+                  <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <span className="text-gray-600 dark:text-gray-400">Runs Scored</span>
+                    <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{pow.runs || '—'}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <span className="text-gray-600 dark:text-gray-400">Best Bowling</span>
+                    <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{pow.wickets || '—'}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <span className="text-gray-600 dark:text-gray-400">Impact Rating</span>
+                    <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{pow.impactRating || '—'}</span>
                   </div>
                 </div>
-              </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{pow.name}</h3>
+                  <p className="text-blue-600 dark:text-blue-400 mt-1">{pow.role} • {pow.teamName} • {pow.district}</p>
+                  {pow.description && <p className="text-gray-600 dark:text-gray-400 mt-2 max-w-md">{pow.description}</p>}
+                </div>
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-2 mt-8 text-blue-600 dark:text-blue-400 font-bold hover:gap-3 transition-all"
+                >
+                  Register Now <ArrowRight size={16} />
+                </Link>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                className="order-1 lg:order-2 relative h-[500px] rounded-2xl overflow-hidden shadow-xl"
+              >
+                <Image
+                  src={pow.photoUrl || '/Hero.png'}
+                  alt={pow.name}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 to-transparent p-6">
+                  <div className="bg-blue-600 text-white font-bold px-4 py-2 rounded-full inline-block">
+                    #{pow.name.split(' ')[0]}
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
       )}
 
-      {/* ── Registration CTA ── */}
-      <section className="py-20 px-6 bg-[#002366] border-t border-[#ffd700]/20">
-        <div className="max-w-screen-2xl mx-auto text-center">
-          <h2 className="font-headline font-black text-5xl md:text-7xl italic uppercase tracking-tighter mb-6 text-white">
-            JOIN THE <span className="text-[#ffd700]">ARENA</span>
+      {/* REGISTRATION CTA */}
+      <section className="py-20 px-6 relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-800 dark:to-indigo-900">
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white mb-6">
+            JOIN THE <span className="text-yellow-300">ARENA</span>
           </h2>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto mb-10">
+          <p className="text-blue-100 dark:text-blue-200 text-lg max-w-2xl mx-auto mb-10">
             Register your team or join as an individual player. Compete for ₹11,00,000 prize money and a 50% scholarship at Saroj International University.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register?type=team"
-              className="bg-[#ffd700] text-[#002366] px-10 py-4 font-headline font-black uppercase tracking-tight text-lg hover:brightness-110 transition-all">
+            <Link
+              href="/register?type=team"
+              className="bg-white text-blue-600 hover:bg-yellow-300 hover:text-blue-800 dark:bg-gray-100 dark:text-blue-600 dark:hover:bg-yellow-300 font-bold px-10 py-4 rounded-full transition-all text-lg shadow-lg"
+            >
               Register Team — ₹11,000
             </Link>
-            <Link href="/register?type=individual"
-              className="border-2 border-[#ffd700] text-[#ffd700] px-10 py-4 font-headline font-black uppercase tracking-tight text-lg hover:bg-[#ffd700] hover:text-[#002366] transition-all">
+            <Link
+              href="/register?type=individual"
+              className="border-2 border-white text-white hover:bg-white hover:text-blue-600 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-gray-100 dark:hover:text-blue-600 font-bold px-10 py-4 rounded-full transition-all text-lg"
+            >
               Register Individual — ₹1,000
             </Link>
           </div>
