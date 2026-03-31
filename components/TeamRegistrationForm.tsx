@@ -27,9 +27,10 @@ const districts = [
 
 const emptyPlayer = (): Player => ({ name:'',dateOfBirth:'',phone:'',aadhaarNo:'',role:'',aadhaarDoc:'',schoolIdDoc:'',dobProofDoc:'',photoDoc:'' })
 
-const inputCls = "w-full bg-[#0b0b0f] border border-[#444650]/40 text-[#e4e1e9] px-4 py-3 text-sm font-body placeholder:text-[#444650] focus:outline-none focus:border-[#ffd700]/60 transition-colors"
-const labelCls = "block text-xs font-headline font-bold uppercase tracking-widest text-[#c4c6d0] mb-2"
-const sectionCls = "bg-[#131318] border border-[#444650]/20 p-6 md:p-8"
+// Updated classes for light/dark mode
+const inputCls = "w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 px-4 py-3 text-sm font-body placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all rounded-xl"
+const labelCls = "block text-xs font-headline font-bold uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-2"
+const sectionCls = "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-6 md:p-8 rounded-3xl shadow-sm"
 
 export default function TeamRegistrationForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<TeamFormData>()
@@ -64,24 +65,24 @@ export default function TeamRegistrationForm() {
       {/* Team Details */}
       <div className={sectionCls}>
         <div className="flex items-center gap-3 mb-6">
-          <span className="material-symbols-outlined text-[#ffd700]">groups</span>
-          <h2 className="font-headline font-black text-xl uppercase tracking-tight text-[#ffd700]">Team Details</h2>
+          <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">groups</span>
+          <h2 className="font-headline font-black text-xl uppercase tracking-tight text-blue-600 dark:text-blue-400">Team Details</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-5">
           <div><label className={labelCls}>Team Name *</label>
             <input {...register('teamName', { required: true })} className={inputCls} placeholder="Enter team name" />
-            {errors.teamName && <p className="text-red-400 text-xs mt-1">Team name is required</p>}
+            {errors.teamName && <p className="text-red-500 text-xs mt-1">Team name is required</p>}
           </div>
           <div><label className={labelCls}>District *</label>
             <select {...register('district', { required: true })} className={inputCls}>
               <option value="">Select District</option>
               {districts.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
-            {errors.district && <p className="text-red-400 text-xs mt-1">District is required</p>}
+            {errors.district && <p className="text-red-500 text-xs mt-1">District is required</p>}
           </div>
           <div className="md:col-span-2"><label className={labelCls}>School/College Name *</label>
             <input {...register('schoolCollege', { required: true })} className={inputCls} placeholder="Enter school or college name" />
-            {errors.schoolCollege && <p className="text-red-400 text-xs mt-1">School/College name is required</p>}
+            {errors.schoolCollege && <p className="text-red-500 text-xs mt-1">School/College name is required</p>}
           </div>
           <div><label className={labelCls}>Coach Name</label><input {...register('coachName')} className={inputCls} placeholder="Coach name" /></div>
           <div><label className={labelCls}>Coach Phone</label><input {...register('coachPhone')} className={inputCls} placeholder="Coach phone" /></div>
@@ -89,7 +90,7 @@ export default function TeamRegistrationForm() {
           <div><label className={labelCls}>Manager Phone</label><input {...register('managerPhone')} className={inputCls} placeholder="Manager phone" /></div>
           <div className="md:col-span-2"><label className={labelCls}>Email ID * (for confirmation)</label>
             <input type="email" {...register('email', { required: true })} className={inputCls} placeholder="Team email" />
-            {errors.email && <p className="text-red-400 text-xs mt-1">Email is required</p>}
+            {errors.email && <p className="text-red-500 text-xs mt-1">Email is required</p>}
           </div>
         </div>
       </div>
@@ -98,41 +99,41 @@ export default function TeamRegistrationForm() {
       <div className={sectionCls}>
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-[#ffd700]">sports_cricket</span>
-            <h2 className="font-headline font-black text-xl uppercase tracking-tight text-[#ffd700]">Players ({players.length}/15)</h2>
+            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">sports_cricket</span>
+            <h2 className="font-headline font-black text-xl uppercase tracking-tight text-blue-600 dark:text-blue-400">Players ({players.length}/15)</h2>
           </div>
           <button type="button" onClick={addPlayer} disabled={players.length >= 15}
-            className="flex items-center gap-2 bg-[#ffd700] text-[#002366] px-4 py-2 font-headline font-black uppercase tracking-tight text-xs hover:brightness-110 transition-all disabled:opacity-40">
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 font-headline font-black uppercase tracking-tight text-xs rounded-full transition-all disabled:opacity-40 shadow-sm">
             <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span> Add Player
           </button>
         </div>
 
         <div className="space-y-3">
           {players.map((player, index) => (
-            <div key={index} className="border border-[#444650]/20">
-              <div className="flex justify-between items-center p-4 bg-[#0b0b0f] cursor-pointer"
+            <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
+              <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-900 cursor-pointer"
                 onClick={() => setExpandedPlayer(expandedPlayer === index ? -1 : index)}>
-                <h3 className="font-headline font-bold uppercase tracking-tight text-sm text-[#e4e1e9]">
+                <h3 className="font-headline font-bold uppercase tracking-tight text-sm text-gray-800 dark:text-white">
                   Player {index + 1}{player.name && ` — ${player.name}`}
                 </h3>
                 <div className="flex items-center gap-3">
-                  <span className="text-[0.6rem] font-headline font-bold uppercase tracking-widest text-[#c4c6d0]/50">
+                  <span className="text-[0.6rem] font-headline font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
                     {[player.aadhaarDoc, player.schoolIdDoc, player.dobProofDoc, player.photoDoc].filter(Boolean).length}/4 docs
                   </span>
                   {players.length > 1 && (
                     <button type="button" onClick={e => { e.stopPropagation(); removePlayer(index) }}
-                      className="text-red-400/60 hover:text-red-400 transition-colors">
+                      className="text-red-500/60 hover:text-red-600 dark:text-red-400/60 dark:hover:text-red-400 transition-colors">
                       <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
                     </button>
                   )}
-                  <span className="material-symbols-outlined text-[#c4c6d0]/40" style={{ fontSize: '18px' }}>
+                  <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>
                     {expandedPlayer === index ? 'expand_less' : 'expand_more'}
                   </span>
                 </div>
               </div>
 
               {expandedPlayer === index && (
-                <div className="p-5 space-y-5 border-t border-[#444650]/20">
+                <div className="p-5 space-y-5 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div><label className={labelCls}>Full Name *</label><input value={player.name} onChange={e => updatePlayer(index,'name',e.target.value)} className={inputCls} placeholder="Player full name" required /></div>
                     <div><label className={labelCls}>Date of Birth *</label><input type="date" value={player.dateOfBirth} onChange={e => updatePlayer(index,'dateOfBirth',e.target.value)} className={inputCls} required /></div>
@@ -166,23 +167,23 @@ export default function TeamRegistrationForm() {
 
       {/* Declaration */}
       <div className={sectionCls}>
-        <h2 className="font-headline font-black text-xl uppercase tracking-tight text-[#ffd700] mb-4">Declaration</h2>
-        <div className="bg-[#ffd700]/5 border border-[#ffd700]/20 p-5 text-sm text-[#c4c6d0] space-y-1 mb-5">
-          <p className="text-[#e4e1e9] font-semibold mb-2">I hereby declare that:</p>
+        <h2 className="font-headline font-black text-xl uppercase tracking-tight text-blue-600 dark:text-blue-400 mb-4">Declaration</h2>
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-5 text-sm text-gray-700 dark:text-gray-300 rounded-xl space-y-1 mb-5">
+          <p className="text-gray-800 dark:text-white font-semibold mb-2">I hereby declare that:</p>
           <p>• All information provided is true and correct</p>
           <p>• All players meet the Under-19, Class 12 eligibility criteria</p>
           <p>• Any false information may lead to team disqualification</p>
           <p>• Registration fee of ₹11,000 is non-refundable</p>
         </div>
         <label className="flex items-start gap-3 cursor-pointer">
-          <input type="checkbox" required className="mt-1 accent-[#ffd700]" />
-          <span className="text-sm text-[#c4c6d0]">I agree to the above declaration and SPL tournament terms & conditions</span>
+          <input type="checkbox" required className="mt-1 accent-blue-600 dark:accent-blue-400" />
+          <span className="text-sm text-gray-700 dark:text-gray-300">I agree to the above declaration and SPL tournament terms & conditions</span>
         </label>
       </div>
 
       {/* Warning */}
-      <div className="bg-[#ffd700]/5 border border-[#ffd700]/20 p-4 text-sm text-[#c4c6d0]">
-        <p className="font-headline font-bold uppercase tracking-wide text-[#ffd700] mb-2">Important Notes</p>
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-5 text-sm text-gray-700 dark:text-gray-300 rounded-xl">
+        <p className="font-headline font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400 mb-2">Important Notes</p>
         <p>• Age fraud will lead to immediate disqualification</p>
         <p>• Team registration fee ₹11,000 is non-refundable</p>
         <p>• All player documents are mandatory for verification</p>
@@ -190,9 +191,9 @@ export default function TeamRegistrationForm() {
 
       {/* Submit */}
       <div className={`${sectionCls} text-center`}>
-        <p className="text-[#c4c6d0] mb-4">Registration Fee: <span className="font-headline font-black text-[#ffd700] text-xl">₹11,000</span></p>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">Registration Fee: <span className="font-headline font-black text-blue-600 dark:text-blue-400 text-xl">₹11,000</span></p>
         <button type="submit" disabled={isSubmitting}
-          className="bg-[#ffd700] text-[#002366] px-12 py-4 font-headline font-black uppercase tracking-tight text-lg hover:brightness-110 transition-all disabled:opacity-50">
+          className="bg-blue-600 max-md:text-[12px] hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-12 py-4 font-headline font-black uppercase tracking-tight text-lg rounded-full transition-all disabled:opacity-50 shadow-md">
           {isSubmitting ? 'Submitting...' : 'Register Team & Pay'}
         </button>
       </div>
