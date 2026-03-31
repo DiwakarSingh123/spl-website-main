@@ -200,32 +200,59 @@ export default function Sponsors() {
       </section>
 
       {/* Become a Sponsor CTA */}
-      <section className="py-16 px-5 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-800 dark:to-indigo-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
-        <div className="max-w-2xl mx-auto text-center relative z-10">
-          <h2 className="font-headline font-black text-4xl sm:text-5xl italic uppercase tracking-tighter mb-6 text-white">
-            Become a <span className="text-yellow-300">Sponsor</span>
-          </h2>
-          <p className="text-blue-100 dark:text-blue-200 mb-8">
-            Join hands in nurturing young cricket talent across Uttar Pradesh
-          </p>
-          
-          <div className="text-blue-100 dark:text-blue-200 text-sm mb-8 space-y-1">
-            <p>Email: <span className="text-yellow-300">info@splcricket.com</span></p>
-            <p>Phone: <span className="text-yellow-300">+91 98765 43210</span></p>
-          </div>
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-800 dark:to-indigo-900 relative overflow-hidden">
 
-          <Link href="/contact">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white text-blue-600 hover:bg-yellow-300 hover:text-blue-800 dark:bg-gray-100 dark:text-blue-600 dark:hover:bg-yellow-300 font-headline font-black uppercase tracking-tight rounded-2xl px-12 py-4 transition-all shadow-lg"
-            >
-              Contact Sponsorship Team
-            </motion.button>
-          </Link>
-        </div>
-      </section>
+  <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+
+  <div className="max-w-2xl mx-auto text-center relative z-10">
+
+    {/* Heading */}
+    <h2 className="font-headline font-black italic uppercase tracking-tight 
+    text-2xl sm:text-3xl md:text-4xl lg:text-5xl 
+    mb-4 sm:mb-6 text-white">
+      Become a <span className="text-yellow-300">Sponsor</span>
+    </h2>
+
+    {/* Subtitle */}
+    <p className="text-blue-100 text-sm sm:text-base lg:text-lg mb-6 sm:mb-8">
+      Join hands in nurturing young cricket talent across Uttar Pradesh
+    </p>
+    
+    {/* Contact Info */}
+    <div className="text-blue-100 text-xs sm:text-sm mb-6 sm:mb-8 space-y-1">
+      <p>
+        Email: <span className="text-yellow-300 break-all">info@splcricket.com</span>
+      </p>
+      <p>
+        Phone: <span className="text-yellow-300">+91 98765 43210</span>
+      </p>
+    </div>
+
+    {/* Button */}
+    <Link href="/contact" className="w-full sm:w-auto">
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="
+          w-full sm:w-auto
+          bg-white text-blue-600 
+          hover:text-white
+          font-semibold sm:font-bold uppercase tracking-wide
+          text-sm sm:text-base lg:text-lg
+          rounded-full sm:rounded-2xl
+          px-6 sm:px-8 lg:px-10 py-3 sm:py-4
+          shadow-lg transition-all duration-300
+
+          bg-gradient-to-r from-white to-white 
+          hover:from-blue-600 hover:to-indigo-600
+        "
+      >
+        Contact Sponsorship Team
+      </motion.button>
+    </Link>
+
+  </div>
+</section>
     </div>
   )
 }

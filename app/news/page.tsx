@@ -36,7 +36,7 @@ export default function News() {
       .then(data => {
         if (Array.isArray(data)) setAnnouncements(data.filter((a: Announcement) => a.active))
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }, [])
 
@@ -44,15 +44,8 @@ export default function News() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-800 dark:text-gray-100 pt-20 overflow-x-hidden transition-colors duration-300">
 
       {/* HERO - with abstract shapes */}
-      <section className="relative py-16 md:py-24 lg:py-28 border-b border-gray-200 dark:border-gray-800 overflow-hidden">
-        {/* Abstract background shapes */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/50 dark:bg-blue-900/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-200/50 dark:bg-indigo-900/20 rounded-full blur-3xl" />
-          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-yellow-200/30 dark:bg-yellow-900/10 rounded-full blur-2xl" />
-        </div>
-
-        <div className="max-w-screen-2xl mx-auto px-5 sm:px-6 lg:px-8 relative z-10">
+      <section className="relative py-20 md:py-28 border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-screen-2xl mx-auto px-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -60,15 +53,15 @@ export default function News() {
             className="flex flex-col items-center text-center"
           >
             <motion.div
-              animate={{ rotate: [0, 15, -15, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl mb-6 shadow-lg"
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl mb-6 shadow-lg"
             >
-              <span className="material-symbols-outlined text-white text-4xl sm:text-5xl">newspaper</span>
+              <span className="material-symbols-outlined text-white text-5xl">newspaper</span>
             </motion.div>
 
-            <p className="uppercase font-headline font-bold tracking-[3px] sm:tracking-[4px] text-blue-600 dark:text-blue-400 text-xs sm:text-sm mb-3">SPL 2026 • LIVE UPDATES</p>
-            <h1 className="font-headline font-black text-5xl sm:text-6xl lg:text-8xl italic uppercase tracking-[-2px] sm:tracking-[-4px] leading-[0.9] text-gray-900 dark:text-white px-2">
+            <p className="uppercase font-headline font-bold tracking-[4px] text-blue-600 dark:text-blue-400 text-sm mb-3">SPL 2026 • LIVE FIXTURES</p>
+            <h1 className="font-headline font-black max-md:text-4xl text-5xl md:text-7xl italic uppercase tracking-[-4px] leading-[0.85] text-gray-900 dark:text-white">
               NEWS &amp; <span className="text-blue-600 dark:text-blue-400">ANNOUNCEMENTS</span>
             </h1>
             <p className="mt-6 max-w-md sm:max-w-lg text-gray-600 dark:text-gray-400 text-base sm:text-lg lg:text-xl px-4">
@@ -76,6 +69,8 @@ export default function News() {
             </p>
           </motion.div>
         </div>
+
+        {/* Subtle background glow */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-100/20 dark:from-blue-900/10 to-transparent pointer-events-none" />
       </section>
 
@@ -90,7 +85,7 @@ export default function News() {
           >
             <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
             <div className="w-8 h-px bg-red-500" />
-            <h2 className="font-headline font-black text-3xl sm:text-4xl uppercase tracking-tighter">Official Announcements</h2>
+            <h2 className="font-headline font-black text-2xl sm:text-4xl uppercase tracking-tighter">Official Announcements</h2>
           </motion.div>
 
           {loading ? (
@@ -190,7 +185,7 @@ export default function News() {
           </div>
 
           {/* Full list - mobile friendly */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl divide-y divide-gray-100 dark:divide-gray-700 shadow-sm">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200  dark:border-gray-700 rounded-3xl divide-y divide-gray-100 dark:divide-gray-700 shadow-sm">
             {staticNews.map((item, i) => (
               <motion.div
                 key={item.id}
@@ -198,10 +193,10 @@ export default function News() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                whileHover={{ backgroundColor: '#f9fafb' }}
+                // whileHover={{ backgroundColor: 'gray' }}
                 className="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
               >
-                <div className="px-4 py-1 text-xs font-headline font-black uppercase tracking-widest border border-blue-300 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 rounded-2xl w-fit">
+                <div className="px-4 py-1 text-xs font-headline font-black  uppercase tracking-widest border border-blue-300 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 rounded-2xl w-fit">
                   {item.category}
                 </div>
 

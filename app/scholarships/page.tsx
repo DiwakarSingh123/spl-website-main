@@ -67,7 +67,7 @@ export default function Scholarships() {
       {/* Big 50% Highlight */}
       <section className="py-12 bg-white/80 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 text-center">
         <div className="max-w-screen-2xl mx-auto px-5 sm:px-6">
-          <div className="text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-headline font-black text-blue-600 dark:text-blue-400 leading-none tracking-tighter">
+          <div className="text-5xl sm:text-5xl md:text-6xl mb-6 lg:text-[7rem] font-headline font-black text-blue-600 dark:text-blue-400 leading-none tracking-tighter">
             50%
           </div>
           <p className="text-xl sm:text-2xl font-medium text-gray-800 dark:text-white -mt-4">Scholarship on Tuition Fees</p>
@@ -137,7 +137,7 @@ export default function Scholarships() {
                 transition={{ delay: i * 0.1 }}
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-8 shadow-sm"
               >
-                <div className="text-5xl font-headline font-black text-blue-200 dark:text-blue-800/30 mb-4">{s.n}</div>
+                <div className="text-5xl font-headline font-black text-blue-200 dark:text-blue-800/60 mb-4">{s.n}</div>
                 <h3 className="font-headline font-bold uppercase tracking-tight mb-3 text-base text-gray-800 dark:text-white">{s.title}</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{s.desc}</p>
               </motion.div>

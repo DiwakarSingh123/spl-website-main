@@ -46,140 +46,151 @@ export default function Home() {
     <main className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-800 dark:text-gray-100">
 
       {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background with abstract shapes - dark mode variants */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/50 dark:bg-blue-900/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-200/50 dark:bg-indigo-900/20 rounded-full blur-3xl" />
-          <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-yellow-200/30 dark:bg-yellow-900/10 rounded-full blur-2xl" />
-        </div>
+   
+<section className="relative min-h-screen flex items-center overflow-hidden">
+  {/* Background shapes - unchanged */}
+  <div className="absolute inset-0 z-0">
+    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/50 dark:bg-blue-900/20 rounded-full blur-3xl" />
+    <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-200/50 dark:bg-indigo-900/20 rounded-full blur-3xl" />
+    <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-yellow-200/30 dark:bg-yellow-900/10 rounded-full blur-2xl" />
+  </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 lg:py-0 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="inline-flex items-center gap-2 bg-blue-600/10 dark:bg-blue-500/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6 border border-blue-200 dark:border-blue-800">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600 dark:bg-blue-400"></span>
-                </span>
-                <span className="text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider">Live Match</span>
-                <span className="text-gray-500 dark:text-gray-400 text-xs">• Finals Week</span>
-              </div>
+ 
+  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-12 sm:py-20 lg:py-0 w-full">
+    
+   
+    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:items-start">
+      
+      {/* LEFT CONTENT - exactly same classes, only added mobile padding tweaks */}
+      <div className="w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          {/* Badge - unchanged */}
+          <div className="inline-flex items-center max-md:mt-10 gap-2 bg-blue-600/10 dark:bg-blue-500/20 backdrop-blur-sm rounded-full px-3 sm:px-4 py-1.5 mb-6 border border-blue-200 dark:border-blue-800">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600 dark:bg-blue-400"></span>
+            </span>
+            <span className="text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider">Live Match</span>
+            <span className="text-gray-500 dark:text-gray-400 text-xs">• Finals Week</span>
+          </div>
 
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight mb-6 text-gray-900 dark:text-white">
-                BATTLE OF <br />
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">TITANS</span>
-              </h1>
+          {/* Heading - mobile text size adjusted, desktop keeps original lg:text-8xl */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight mb-6 text-gray-900 dark:text-white">
+            BATTLE OF <br />
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">TITANS</span>
+          </h1>
 
-              {/* Live Scoreboard */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-xl mb-8"
-              >
-                {liveMatch ? (
-                  <>
-                    <div className="flex justify-between items-center mb-6">
-                      <div className="text-center flex-1">
-                        <div className="text-3xl font-black text-gray-800 dark:text-white">{liveMatch.team1.name}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">TEAM</div>
-                      </div>
-                      <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">VS</div>
-                      <div className="text-center flex-1">
-                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">{liveMatch.team2?.name || 'TBD'}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">TEAM</div>
-                      </div>
-                    </div>
-                    {liveMatch.score1 && (
-                      <div className="text-center mb-4">
-                        <div className="text-5xl font-black text-blue-600 dark:text-blue-400">{liveMatch.score1}</div>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <span className="font-mono">{liveMatch.phase.replace('_', ' ')}</span>
-                      {liveMatch.winner && (
-                        <span className="text-green-600 dark:text-green-400 flex items-center gap-1"><Trophy size={12} /> {liveMatch.winner}</span>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex justify-between items-center mb-6">
-                      <div className="text-center flex-1">
-                        <div className="text-3xl font-black text-gray-800 dark:text-white">SPL</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Season 2026</div>
-                      </div>
-                      <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">U19</div>
-                      <div className="text-center flex-1">
-                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">UP</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Uttar Pradesh</div>
-                      </div>
-                    </div>
-                    <div className="text-center mb-4">
-                      <div className="text-5xl font-black text-blue-600 dark:text-blue-400">₹11L</div>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <span className="font-mono">Winner Prize Money</span>
-                      <span className="text-blue-600 dark:text-blue-400">50% Scholarship</span>
-                    </div>
-                  </>
+          {/* Live Scoreboard Card - mobile padding less */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 shadow-xl mb-8"
+          >
+            {liveMatch ? (
+              <>
+                <div className="flex max-lg:flex-col justify-between items-center gap-2 sm:gap-4 mb-6">
+                  <div className="text-center flex-1">
+                    <div className="text-xl sm:text-3xl font-black text-gray-800 dark:text-white truncate">{liveMatch.team1.name}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">TEAM</div>
+                  </div>
+                  <div className="text-base sm:text-2xl font-bold text-gray-400 dark:text-gray-500">VS</div>
+                  <div className="text-center flex-1">
+                    <div className="text-xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 truncate">{liveMatch.team2?.name || 'TBD'}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">TEAM</div>
+                  </div>
+                </div>
+                {liveMatch.score1 && (
+                  <div className="text-center mb-4">
+                    <div className="text-3xl sm:text-5xl font-black text-blue-600 dark:text-blue-400">{liveMatch.score1}</div>
+                  </div>
                 )}
-              </motion.div>
+                <div className="flex flex-wrap justify-between gap-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className="font-mono">{liveMatch.phase?.replace('_', ' ') || 'Ongoing'}</span>
+                  {liveMatch.winner && (
+                    <span className="text-green-600 dark:text-green-400 flex items-center gap-1"><Trophy size={12} /> {liveMatch.winner}</span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between items-center gap-2 sm:gap-4 mb-6">
+                  <div className="text-center flex-1">
+                    <div className="text-xl sm:text-3xl font-black text-gray-800 dark:text-white">SPL</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">Season 2026</div>
+                  </div>
+                  <div className="text-base sm:text-2xl font-bold text-gray-400 dark:text-gray-500">U19</div>
+                  <div className="text-center flex-1">
+                    <div className="text-xl sm:text-3xl font-black text-blue-600 dark:text-blue-400">UP</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">Uttar Pradesh</div>
+                  </div>
+                </div>
+                <div className="text-center mb-4">
+                  <div className="text-3xl sm:text-5xl font-black text-blue-600 dark:text-blue-400">₹11L</div>
+                </div>
+                <div className="flex flex-wrap justify-between gap-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className="font-mono">Winner Prize Money</span>
+                  <span className="text-blue-600 dark:text-blue-400">50% Scholarship</span>
+                </div>
+              </>
+            )}
+          </motion.div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/register"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-8 py-3 rounded-full transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
-                >
-                  Register Now <ArrowRight size={18} />
-                </Link>
-                <Link
-                  href="/tournament-format"
-                  className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-8 py-3 rounded-full transition-all"
-                >
-                  Tournament Info
-                </Link>
-              </div>
+          {/* CTA Buttons - mobile padding adjusted */}
+          <div className="flex flex-wrap gap-3 sm:gap-4">
+            <Link
+              href="/register"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-6 sm:px-8 py-2.5 sm:py-3 rounded-full transition-all flex items-center gap-2 shadow-md hover:shadow-lg text-sm sm:text-base"
+            >
+              Register Now <ArrowRight size={18} />
+            </Link>
+            <Link
+              href="/tournament-format"
+              className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-600 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full transition-all text-sm sm:text-base"
+            >
+              Tournament Info
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* RIGHT STATS PANEL - CHANGED: visible on mobile now (previously hidden) */}
+      <div className="w-full">
+        <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4">
+          {[
+            { label: 'Winner Prize', value: '₹11L', icon: Trophy },
+            { label: 'Scholarship', value: '50%', icon: Award },
+            { label: 'Participants', value: '1000+', icon: Users },
+            { label: 'Final Venue', value: 'Ekana', icon: MapPin },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.1 }}
+              className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-3 sm:p-5 text-center border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all"
+            >
+              <stat.icon className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400 mx-auto mb-2 sm:mb-3" />
+              <div className="text-base sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{stat.value}</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">{stat.label}</div>
             </motion.div>
-
-            {/* Right Stats Panel */}
-            <div className="hidden lg:grid grid-cols-2 gap-4">
-              {[
-                { label: 'Winner Prize', value: '₹11L', icon: Trophy },
-                { label: 'Scholarship', value: '50%', icon: Award },
-                { label: 'Participants', value: '1000+', icon: Users },
-                { label: 'Final Venue', value: 'Ekana', icon: MapPin },
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl p-5 text-center border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all"
-                >
-                  <stat.icon className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stat.value}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
+    </div>
+  </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden lg:block">
-          <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-600 rounded-full flex justify-center">
-            <div className="w-1 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mt-2 animate-pulse" />
-          </div>
-        </div>
-      </section>
+  {/* Scroll indicator - hidden on mobile, visible on sm and above (desktop unchanged) */}
+  <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden sm:block">
+    <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-600 rounded-full flex justify-center">
+      <div className="w-1 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mt-2 animate-pulse" />
+    </div>
+  </div>
+</section>
 
       {/* UPCOMING FIXTURES */}
       <section className="py-20 px-6 bg-white dark:bg-gray-900">
@@ -387,31 +398,43 @@ export default function Home() {
       )}
 
       {/* REGISTRATION CTA */}
-      <section className="py-20 px-6 relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-800 dark:to-indigo-900">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <h2 className="text-5xl md:text-7xl font-black tracking-tight text-white mb-6">
-            JOIN THE <span className="text-yellow-300">ARENA</span>
-          </h2>
-          <p className="text-blue-100 dark:text-blue-200 text-lg max-w-2xl mx-auto mb-10">
-            Register your team or join as an individual player. Compete for ₹11,00,000 prize money and a 50% scholarship at Saroj International University.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/register?type=team"
-              className="bg-white text-blue-600 hover:bg-yellow-300 hover:text-blue-800 dark:bg-gray-100 dark:text-blue-600 dark:hover:bg-yellow-300 font-bold px-10 py-4 rounded-full transition-all text-lg shadow-lg"
-            >
-              Register Team — ₹11,000
-            </Link>
-            <Link
-              href="/register?type=individual"
-              className="border-2 border-white text-white hover:bg-white hover:text-blue-600 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-gray-100 dark:hover:text-blue-600 font-bold px-10 py-4 rounded-full transition-all text-lg"
-            >
-              Register Individual — ₹1,000
-            </Link>
-          </div>
-        </div>
-      </section>
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-800 dark:to-indigo-900">
+
+  <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+
+  <div className="max-w-7xl mx-auto text-center relative z-10">
+
+    {/* Heading */}
+    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight text-white mb-4 sm:mb-6">
+      JOIN THE <span className="text-yellow-300">ARENA</span>
+    </h2>
+
+    {/* Paragraph */}
+    <p className="text-blue-100 text-sm sm:text-base lg:text-lg max-w-xl sm:max-w-2xl mx-auto mb-6 sm:mb-10">
+      Register your team or join as an individual player. Compete for ₹11,00,000 prize money and a 50% scholarship at Saroj International University.
+    </p>
+
+    {/* Buttons */}
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+
+      <Link
+        href="/register?type=team"
+        className="w-full sm:w-auto text-center bg-white text-blue-600 hover:bg-yellow-300 hover:text-blue-800 font-semibold sm:font-bold px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-full transition-all text-sm sm:text-base lg:text-lg shadow-lg"
+      >
+        Register Team — ₹11,000
+      </Link>
+
+      <Link
+        href="/register?type=individual"
+        className="w-full sm:w-auto text-center border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold sm:font-bold px-6 sm:px-8 lg:px-10 py-3 sm:py-4 rounded-full transition-all text-sm sm:text-base lg:text-lg"
+      >
+        Register Individual — ₹1,000
+      </Link>
+
+    </div>
+
+  </div>
+</section>
     </main>
   )
 }

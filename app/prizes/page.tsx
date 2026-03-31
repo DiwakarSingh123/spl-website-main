@@ -45,7 +45,7 @@ export default function Prizes() {
             </motion.div>
 
             <p className="uppercase font-headline font-bold tracking-[3px] text-blue-600 dark:text-blue-400 text-xs mb-2">SPL 2026</p>
-            <h1 className="font-headline font-black text-5xl sm:text-6xl lg:text-7xl italic uppercase tracking-[-2px] leading-none text-gray-900 dark:text-white">
+            <h1 className="font-headline font-black text-4xl sm:text-6xl lg:text-6xl italic uppercase tracking-[-2px] leading-none text-gray-900 dark:text-white">
               PRIZES &amp; <span className="text-blue-600 dark:text-blue-400">SCHOLARSHIPS</span>
             </h1>
             <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-md text-base sm:text-lg">
@@ -61,8 +61,8 @@ export default function Prizes() {
           <div className="inline-flex flex-col sm:flex-row items-center gap-4">
             <Trophy className="w-12 h-12 text-blue-600 dark:text-blue-400" />
             <div>
-              <div className="text-6xl sm:text-7xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">₹11,00,000</div>
-              <p className="text-gray-600 dark:text-gray-400 text-xl font-medium">Champion Prize</p>
+              <div className="text-4xl sm:text-6xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">₹11,00,000</div>
+              <p className="text-gray-600 dark:text-gray-400 text-xl  mt-4 font-medium">Champion Prize</p>
             </div>
           </div>
         </div>
@@ -86,10 +86,10 @@ export default function Prizes() {
                 whileHover={{ y: -8 }}
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 rounded-3xl p-8 text-center shadow-sm transition-all"
               >
-                <div className="text-6xl mb-6">{p.icon}</div>
+                <div className="text-4xl mb-6">{p.icon}</div>
                 <div className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">{p.place} Place</div>
-                <h3 className="text-2xl font-black mb-2 text-gray-800 dark:text-white">{p.label}</h3>
-                <div className={`text-4xl font-black ${p.color}`}>{p.amount}</div>
+                <h3 className="text-1xl font-black mb-2 text-gray-800 dark:text-white">{p.label}</h3>
+                <div className={`text-3xl font-black ${p.color}`}>{p.amount}</div>
               </motion.div>
             ))}
           </div>
@@ -123,7 +123,7 @@ export default function Prizes() {
       </section>
 
       {/* Scholarship Highlight */}
-      <section className="py-16 px-5 sm:px-6 lg:px-8">
+      <section className="py-16  px-2 md:px-5 sm:px-6 lg:px-8">
         <div className="max-w-screen-2xl mx-auto text-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-12 shadow-sm">
           <div className="text-blue-600 dark:text-blue-400 text-6xl mb-6">🎓</div>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-4 text-gray-800 dark:text-white">
